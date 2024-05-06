@@ -1,0 +1,8 @@
+name: Goblin
+HP: 15
+color: blue
+---
+name: Gob 1
+HP: 22
+color: pink
+---
