@@ -63,6 +63,8 @@ def apply_damage():
     root.nametowidget(f'{current_frame.winfo_name()}.dam').config(text='')
     root.nametowidget(f'{current_frame.winfo_name()}.hp').config(
         text=f'{orighp-intdam}')
+    
+    change_hp_color(orighp-intdam)
 
 
 def apply_heal():
@@ -96,6 +98,8 @@ def apply_heal():
     root.nametowidget(f'{current_frame.winfo_name()}.dam').config(text='')
     root.nametowidget(f'{current_frame.winfo_name()}.hp').config(
         text=f'{orighp-intdam}')
+
+    change_hp_color(orighp-intdam)
 
 
 def button_number(num):
@@ -141,7 +145,13 @@ def button_undo():
         text=f'{orighp-intdam}')
 
 
-def create_frame(name, HP, color='#FFFFFF'):
+def change_hp_color(curr_hp):
+    for x in current_frame.hp_color_thershold:
+        if curr_hp > x[0]: 
+            root.nametowidget(f'{current_frame.winfo_name()}.hp').config(fg=x[1])
+            return
+
+def create_frame(name, HP, color='#FFFFFF', hp_color_divisions=[], hp_colors=['black', 'red']):
     frame = tk.Frame(root, relief=tk.RAISED, borderwidth=3)
     global framenum
 
@@ -154,6 +164,15 @@ def create_frame(name, HP, color='#FFFFFF'):
         if click_callback is not None:
             click_callback(frame)
 
+    newlist = []
+    if hp_color_divisions == []:
+        for i, c in enumerate(hp_colors):
+            hoopee = math.floor(1/len(hp_colors)*(len(hp_colors)-i-1)*int(HP))
+            newlist.append((hoopee, c))
+    else:
+        newlist = list(zip(hp_color_divisions, hp_colors))
+    frame.hp_color_thershold = newlist
+
     label = tk.Label(frame, text=name, width=10, anchor='w')
     label.grid(column=1, row=0, padx=5, pady=5)
     col = tk.Frame(frame, bg=color, width=50, height=30)
@@ -164,7 +183,7 @@ def create_frame(name, HP, color='#FFFFFF'):
         frame, text=f'{HP}', name='hist', width=10, anchor='e')
     lbl_HP_hist.grid(column=1, row=1)
     lbl_HP_curr = tk.Label(
-        frame, text=f'{HP}', name='hp', font=('Helvetica', 14))
+        frame, text=f'{HP}', name='hp', font=('Helvetica', 14), fg=hp_colors[0])
     lbl_HP_curr.grid(column=2, row=1)
     lbl_Dam = tk.Label(frame, text='Damage')
     lbl_Dam.grid(column=0, row=2)
